@@ -34,7 +34,7 @@ public class CacheContainer {
      * @param <V> type used as values in this cache
      * @return a cache
      */
-    public static <K, V> Cache<K, V> getCache() {
+    public synchronized  <K, V> Cache<K, V> getCache() {
         return CACHE_MANAGER.getCache();
     }
 
@@ -45,7 +45,7 @@ public class CacheContainer {
      * @param <V> type used as values in this cache
      * @return a cache
      */
-    public static <K, V> Cache<K, V> getCache(String cacheName) {
+    public synchronized  <K, V> Cache<K, V> getCache(String cacheName) {
         if (cacheName == null) throw new NullPointerException("Cache name cannot be null!");
         return CACHE_MANAGER.getCache(cacheName);
     }
