@@ -8,11 +8,16 @@ import java.util.HashMap;
  */
 public class OffloadableData implements Serializable{
 
-    private final String NAME_SPACE;
+    public final String NAME_SPACE;
     private HashMap<String, double[]> mData;
 
     public OffloadableData(String ID, String seq){
         NAME_SPACE = ID + ":" + seq + "/";
+        mData = new HashMap<String, double[]>();
+    }
+
+    public OffloadableData(String nameSpace){
+        NAME_SPACE = nameSpace;
         mData = new HashMap<String, double[]>();
     }
 
