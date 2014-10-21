@@ -40,7 +40,7 @@ class SampleApp(_gateway :GatewayActor) {
     //init task params
     val bundle: Bundle = new Bundle()
     bundle.putData(BundleKeys.APP_ID, APP_ID)
-    bundle.putData(BundleKeys.TASK_NAME, TASK_ID)
+    bundle.putData(BundleKeys.TASK_ID, TASK_ID)
 
     val request: GhostRequest = new GhostRequest(GhostRequestTypes.REGISTERTASK, bundle)
     val fTask: Future[Any] = gateway.registerTask(request)
@@ -48,8 +48,11 @@ class SampleApp(_gateway :GatewayActor) {
     //waiting for register task....
     val result = Await.result(fTask, Duration.Inf).asInstanceOf[GhostResponse]
 
-    val data :OffloadableData = SampleUtil.genData(TASK_ID, "0")
-    mDataCache.put(data)
+    val seq :String = "0"
+
+    //offload the data
+    val data :OffloadableData = SampleUtil.genData(TASK_ID, seq)
+    mDataCache.put(Util.dataPathBuilder(TASK_NAME, seq), data)
 
     gateway.executeTask()
   }

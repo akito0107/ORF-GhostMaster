@@ -32,14 +32,14 @@ class HeadActor(id: String) extends BaseActor with ActorLogging {
           //TODO LinkedList -> mutable.LinearSeq
 
           val bundle: Bundle = request.PARAMS
-          val taskName: String = bundle.getData(BundleKeys.TASK_NAME)
+          val taskId: String = bundle.getData(BundleKeys.TASK_ID)
 
-          if (taskName != null) {
+          if (taskId != null) {
             val actorList = new mutable.MutableList[(StatusTypes, ActorRef)]()
-            mChildrenTable.put(taskName, actorList)
+            mChildrenTable.put(taskId, actorList)
 
-            for(i<- 0 until MAXACTORNUMS){
-              val worker = this.context.actorOf(MemberActor.props(taskName))
+            for(i <- 0 until MAXACTORNUMS){
+              val worker = this.context.actorOf(MemberActor.props(taskId))
               actorList += ((StatusTypes.STANDBY, worker))
             }
 
@@ -53,10 +53,10 @@ class HeadActor(id: String) extends BaseActor with ActorLogging {
         case GhostRequestTypes.EXECUTE => {
 
           val bundle: Bundle = request.PARAMS
-          val taskName: String = bundle.getData(BundleKeys.TASK_NAME)
+          val taskId: String = bundle.getData(BundleKeys.TASK_ID)
           val requestSeq: String = bundle.getData(BundleKeys.DATA_SEQ)
 
-          val actors = mChildrenTable.get(taskName)
+          val actors = mChildrenTable.get(taskId)
 
           actors match {
             case Some(refs) => {
@@ -86,7 +86,7 @@ class HeadActor(id: String) extends BaseActor with ActorLogging {
 
               val index = i
               */
-              val worker = this.context.actorOf(MemberActor.props(taskName))
+              val worker = this.context.actorOf(MemberActor.props(taskId))
 
               val bundle = new Bundle()
               bundle.putData(BundleKeys.DATA_SEQ, requestSeq)

@@ -28,12 +28,12 @@ public class Util {
         return hexStr;
     }
 
-    public static String taskPathBuilder(String APP_ID, String TASK_NAME){
-        return APP_ID + "/" + TASK_NAME;
+    public static String taskPathBuilder(String APP_ID, String TASK_ID){
+        return APP_ID + "/" + TASK_ID;
     }
 
-    public static String dataPathBuilder(String APP_ID, String TASK_NAME, String SEQ){
-        return APP_ID + "/" + TASK_NAME + "/" + SEQ;
+    public static String dataPathBuilder(String TASK_ID, String SEQ){
+        return  TASK_ID + "/" + SEQ;
     }
 
 }

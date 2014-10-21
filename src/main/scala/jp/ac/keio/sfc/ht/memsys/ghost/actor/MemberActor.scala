@@ -40,19 +40,24 @@ class MemberActor(AppId :String) extends BaseActor with ActorLogging{
         case GhostRequestTypes.EXECUTE =>{
           val bundle :Bundle = request.PARAMS
 
-          val taskId = Util.taskPathBuilder(ID, bundle.getData(BundleKeys.TASK_NAME))
+          val taskId = bundle.getData(BundleKeys.TASK_ID)
+          val seq = bundle.getData(BundleKeys.DATA_SEQ)
 
           if(taskId != currentTaskId){
-            currentTask = mTaskCache.get(Util.taskPathBuilder(ID,taskId))
-            currentTaskId = Util.taskPathBuilder(ID,taskId)
+            currentTask = mTaskCache.get(taskId)
+            currentTaskId =  taskId
           }
 
-          val data = mDataCache.get(currentTaskId)
+          val data = mDataCache.get(Util.dataPathBuilder(currentTaskId, seq))
           val result :OffloadableData = currentTask.run(data)
-          mResultCache.put(currentTaskId, result);
+          mResultCache.put(Util.dataPathBuilder(currentTaskId, seq), result);
+
+          val resultBundle :Bundle = new Bundle()
+          bundle.putData(BundleKeys.TASK_ID, currentTaskId)
+          bundle.putData(BundleKeys.DATA_SEQ, seq)
 
           //TODO error handling
-          sender() ! new GhostResponse(GhostResponseTypes.SUCCESS, currentTaskId, null)
+          sender() ! new GhostResponse(GhostResponseTypes.SUCCESS, currentTaskId, resultBundle)
         }
       }
     }
