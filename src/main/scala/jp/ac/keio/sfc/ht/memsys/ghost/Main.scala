@@ -5,9 +5,9 @@ import jp.ac.keio.sfc.ht.memsys.ghost.actor.{GatewayActor, Gateway}
 import old.lib.commonlib.data.OffloadableData
 import old.lib.commonlib.requests.CacheKeys
 import old.lib.commonlib.tasks.OffloadableTask
-import old.lib.commonlib.util.CacheContainer
 import org.infinispan.Cache
 import org.infinispan.manager.EmbeddedCacheManager
+import sample.CacheContainer
 
 /**
  * Created by aqram on 9/24/14.

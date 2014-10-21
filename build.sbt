@@ -4,7 +4,7 @@ version := "1.0"
 
 scalaVersion := "2.11.2"
 
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers += "Github" at "http://akito0107.github.io/ORF-GhostCommonLib-mvn-repo/"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.6",
@@ -20,5 +20,6 @@ libraryDependencies ++= Seq(
   "org.jboss.marshalling" % "jboss-marshalling-river" % "1.4.4.Final",
   "org.jboss.marshalling" % "jboss-marshalling" % "1.4.4.Final",
   "org.jboss.logging" % "jboss-logging" % "3.1.2.GA",
-  "net.jcip" % "jcip-annotations" % "1.0"
+  "net.jcip" % "jcip-annotations" % "1.0",
+  "GhostCommonLib" % "GhostCommonLib" % "0.2-SNAPSHOT"
 )

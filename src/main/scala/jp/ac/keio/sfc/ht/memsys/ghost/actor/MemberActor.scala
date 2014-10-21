@@ -6,9 +6,10 @@ import old.lib.commonlib.data.OffloadableData
 import old.lib.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
 import old.lib.commonlib.requests._
 import old.lib.commonlib.tasks.OffloadableTask
-import old.lib.commonlib.util.{Util, CacheContainer}
+import old.lib.commonlib.util.Util
 import org.infinispan.Cache
 import org.infinispan.manager.EmbeddedCacheManager
+import sample.CacheContainer
 
 /**
  * Created by aqram on 10/15/14.

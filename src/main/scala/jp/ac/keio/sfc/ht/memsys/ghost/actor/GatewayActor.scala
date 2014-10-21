@@ -1,10 +1,9 @@
 package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
 import akka.actor.{TypedActor, ActorContext, ActorRef, Props}
-import old.lib.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
-import old.lib.commonlib.requests.{BundleKeys, Bundle, GhostRequest, GhostResponse}
-
-import old.lib.commonlib.util.Util;
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests.{GhostResponse, BundleKeys, Bundle, GhostRequest}
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 
 import scala.concurrent.Future
 import scala.collection.mutable

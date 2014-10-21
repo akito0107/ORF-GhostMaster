@@ -2,14 +2,13 @@ package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
 import akka.actor.{ActorRef, ActorLogging, Props}
 import akka.pattern.ask
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests.{GhostResponse, BundleKeys, Bundle, GhostRequest}
 import jp.ac.keio.sfc.ht.memsys.ghost.types.StatusTypes
-import old.lib.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
-import old.lib.commonlib.requests.{BundleKeys, Bundle, GhostResponse, GhostRequest}
 
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-import scala.util.control.Breaks._
 
 /**
  * Created by aqram on 10/2/14.

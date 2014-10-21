@@ -1,4 +1,4 @@
-package old.lib.commonlib.util;
+package sample;
 
 /**
  * Created by aqram on 10/2/14.

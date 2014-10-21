@@ -1,14 +1,15 @@
 package sample;
 
-import old.lib.commonlib.data.OffloadableData;
-import old.lib.commonlib.tasks.OffloadableTask;
+
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData;
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask;
 
 /**
  * Created by aqram on 10/17/14.
  * 与えられた配列をソートして返すタスク
  * ヒープソートを使ってます
  */
-public class SampleTaskImpl implements OffloadableTask{
+public class SampleTaskImpl implements OffloadableTask {
 
     private static final String TASK_NAME = "SAMPLE";
 

@@ -1,15 +1,13 @@
 package sample
 
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.GatewayActor
-import old.lib.commonlib.data.OffloadableData
-import old.lib.commonlib.datatypes.GhostRequestTypes
-import old.lib.commonlib.requests._
-import old.lib.commonlib.tasks.OffloadableTask
-import old.lib.commonlib.util.CacheContainer
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.GhostRequestTypes
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests._
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 import org.infinispan.Cache
 import org.infinispan.manager.EmbeddedCacheManager
-
-import old.lib.commonlib.util.Util
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}

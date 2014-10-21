@@ -1,6 +1,7 @@
 package sample;
 
-import old.lib.commonlib.data.OffloadableData;
+
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData;
 
 import java.security.SecureRandom;
 import java.util.Random;
