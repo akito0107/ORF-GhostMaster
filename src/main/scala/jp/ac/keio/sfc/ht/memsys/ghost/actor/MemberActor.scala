@@ -1,12 +1,13 @@
 package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
-import akka.actor.{ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.event.Logging
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests._
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
+import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 import jp.ac.keio.sfc.ht.memsys.ghost.types.StatusTypes
-import old.lib.commonlib.data.OffloadableData
-import old.lib.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
-import old.lib.commonlib.requests._
-import old.lib.commonlib.tasks.OffloadableTask
-import old.lib.commonlib.util.Util
 import org.infinispan.Cache
 import org.infinispan.manager.EmbeddedCacheManager
 import sample.CacheContainer
@@ -19,7 +20,9 @@ object MemberActor {
   def props(id: String): Props = Props(new MemberActor(id))
 }
 
-class MemberActor(AppId :String) extends BaseActor with ActorLogging{
+class MemberActor(AppId :String) extends Actor{
+
+  val log = Logging(context.system, this)
 
   val ID = AppId;
   var Status :StatusTypes = StatusTypes.STANDBY

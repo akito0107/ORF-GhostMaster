@@ -1,5 +1,6 @@
 package sample
 
+import akka.util.Timeout
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.{Gateway, GatewayActor}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.GhostRequestTypes
@@ -9,8 +10,10 @@ import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 import org.infinispan.Cache
 import org.infinispan.manager.EmbeddedCacheManager
 
-import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by aqram on 10/17/14.
@@ -29,8 +32,11 @@ class SampleApp(_gateway :Gateway) {
 
   def runApp :Unit = {
     //register application
+
+    println("Start App")
     val APP_ID = gateway.registerApplication(APP_NAME)
 
+    println("APP ID : " + APP_ID)
     //register task for cache
     val TASK_ID = Util.taskPathBuilder(APP_ID, TASK_NAME)
     mTaskCache.put(TASK_ID, new SampleTaskImpl())
@@ -43,17 +49,25 @@ class SampleApp(_gateway :Gateway) {
     val request: GhostRequest = new GhostRequest(GhostRequestTypes.REGISTERTASK, bundle)
     val fTask: Future[Any] = gateway.registerTask(request)
 
+    implicit val timeout = Timeout(5 seconds)
+
     //waiting for register task....
-    val result = Await.result(fTask, Duration.Inf).asInstanceOf[GhostResponse]
+    val result = Await.result(fTask, timeout.duration).asInstanceOf[GhostResponse]
+    println("Register Task DONE")
 
     val seq :String = "0"
 
     //offload the data
+    println("Offload the data")
     val data :OffloadableData = SampleUtil.genData(TASK_ID, seq)
-    mDataCache.put(Util.dataPathBuilder(TASK_NAME, seq), data)
+    mDataCache.put(Util.dataPathBuilder(TASK_ID, seq), data)
+
+    println("Gen the data path" + Util.dataPathBuilder(TASK_ID, seq))
 
     val eBundle :Bundle = new Bundle()
-    eBundle.putData(BundleKeys.DATA_SEQ, Util.dataPathBuilder(TASK_NAME, seq))
+    eBundle.putData(BundleKeys.APP_ID, APP_ID)
+    eBundle.putData(BundleKeys.TASK_ID, TASK_ID)
+    eBundle.putData(BundleKeys.DATA_SEQ, Util.dataPathBuilder(TASK_ID, seq))
 
     val eRequest :GhostRequest = new GhostRequest(GhostRequestTypes.EXECUTE, eBundle)
 

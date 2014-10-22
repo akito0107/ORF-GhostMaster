@@ -1,12 +1,16 @@
 package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
 import akka.actor.{TypedActor, ActorContext, ActorRef, Props}
+import akka.event.Logging
+import akka.util.Timeout
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests.{GhostResponse, BundleKeys, Bundle, GhostRequest}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 
 import scala.concurrent.Future
 import scala.collection.mutable
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import akka.pattern.ask
 
@@ -18,6 +22,8 @@ import akka.pattern.ask
 class GatewayActor(id: Int) extends Gateway {
 
   private val mRefMap: mutable.HashMap[String, ActorRef] = new mutable.HashMap()
+
+  val log = Logging(TypedActor.context.system, TypedActor.context.self)
 
   override def registerApplication(APPNAME :String) :String = {
     //TODO アドレスも返す
@@ -44,6 +50,7 @@ class GatewayActor(id: Int) extends Gateway {
         bundle.putData(BundleKeys.TASK_ID, taskId)
         val mes = new GhostRequest(GhostRequestTypes.REGISTERTASK, bundle)
 
+        implicit val timeout = Timeout(5 seconds)
         val f = ref ? mes
 
         return f
@@ -62,10 +69,13 @@ class GatewayActor(id: Int) extends Gateway {
 
   override def executeTask(request: GhostRequest): Future[Any] = {
 
+    log.info("Gateway get execute request !")
     val bundle :Bundle = request.PARAMS
     val appId = bundle.getData(BundleKeys.APP_ID)
     val taskId = bundle.getData(BundleKeys.TASK_ID)
     val seq = bundle.getData(BundleKeys.DATA_SEQ)
+
+    log.info("Gateway execute request appid " + appId + " taskId " + taskId + " seq " + seq)
 
     val head = mRefMap.get(appId)
 
@@ -77,6 +87,7 @@ class GatewayActor(id: Int) extends Gateway {
         bundle.putData(BundleKeys.DATA_SEQ, seq)
         val mes = new GhostRequest(GhostRequestTypes.EXECUTE, bundle)
 
+        implicit val timeout = Timeout(5 seconds)
         val f = ref ? mes
 
         return f

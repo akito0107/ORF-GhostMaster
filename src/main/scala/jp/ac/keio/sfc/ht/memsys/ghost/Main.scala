@@ -10,8 +10,6 @@ import sample.{SampleApp, SampleTaskImpl}
  */
 object Main extends App{
 
-
-
   val ID:Int = 0
   val system = ActorSystem("Main")
 
