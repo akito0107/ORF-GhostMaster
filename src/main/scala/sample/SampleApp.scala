@@ -1,6 +1,6 @@
 package sample
 
-import jp.ac.keio.sfc.ht.memsys.ghost.actor.GatewayActor
+import jp.ac.keio.sfc.ht.memsys.ghost.actor.{Gateway, GatewayActor}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.GhostRequestTypes
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests._
@@ -15,7 +15,7 @@ import scala.concurrent.{Await, Future}
 /**
  * Created by aqram on 10/17/14.
  */
-class SampleApp(_gateway :GatewayActor) {
+class SampleApp(_gateway :Gateway) {
 
   val gateway = _gateway
 
@@ -52,7 +52,12 @@ class SampleApp(_gateway :GatewayActor) {
     val data :OffloadableData = SampleUtil.genData(TASK_ID, seq)
     mDataCache.put(Util.dataPathBuilder(TASK_NAME, seq), data)
 
-    gateway.executeTask()
+    val eBundle :Bundle = new Bundle()
+    eBundle.putData(BundleKeys.DATA_SEQ, Util.dataPathBuilder(TASK_NAME, seq))
+
+    val eRequest :GhostRequest = new GhostRequest(GhostRequestTypes.EXECUTE, eBundle)
+
+    gateway.executeTask(eRequest)
   }
 
 }
