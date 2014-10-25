@@ -57,35 +57,42 @@ class SampleApp(_gateway: Gateway) {
     val result = Await.result(fTask, timeout.duration).asInstanceOf[GhostResponse]
     println("Register Task DONE")
 
-    val seq: String = "0"
+    for (i <- 0 until 10) {
+      var seq: String = i.toString()
 
-    //offload the data
-    println("Offload the data")
-    val data: OffloadableData = SampleUtil.genData(TASK_ID, seq)
-    data.putData(SampleTaskKeys.DEBUG, null)
-    //    data.debugData()
+      //offload the data
+      println("Offload the data")
+      val data: OffloadableData = SampleUtil.genData(TASK_ID, seq)
+      data.putData(SampleTaskKeys.DEBUG, null)
+      //    data.debugData()
 
-    mDataCache.put(Util.dataPathBuilder(TASK_ID, seq), data)
+      mDataCache.put(Util.dataPathBuilder(TASK_ID, seq), data)
 
-    println("Gen the data path ://" + Util.dataPathBuilder(TASK_ID, seq))
+      println("Gen the data path ://" + Util.dataPathBuilder(TASK_ID, seq))
 
-    val eBundle: Bundle = new Bundle()
-    eBundle.putData(BundleKeys.APP_ID, APP_ID)
-    eBundle.putData(BundleKeys.TASK_ID, TASK_ID)
-    eBundle.putData(BundleKeys.DATA_SEQ, seq)
+      val eBundle: Bundle = new Bundle()
+      eBundle.putData(BundleKeys.APP_ID, APP_ID)
+      eBundle.putData(BundleKeys.TASK_ID, TASK_ID)
+      eBundle.putData(BundleKeys.DATA_SEQ, seq)
 
-    val eRequest: GhostRequest = new GhostRequest(GhostRequestTypes.EXECUTE, eBundle)
+      val eRequest: GhostRequest = new GhostRequest(GhostRequestTypes.EXECUTE, eBundle)
 
-    val res = gateway.executeTask(eRequest)
-    val rlt = Await.result(res, timeout.duration).asInstanceOf[GhostResponse]
+      val res = gateway.executeTask(eRequest)
 
-    val o: OffloadableData = mResultCache.get(Util.dataPathBuilder(TASK_ID, seq))
-    val ad = o.getData(SampleTaskKeys.DATA)
+      println("print result of "  + seq)
+      /*
+      for (i <- 0 to ad.length - 1) {
+        println(ad(i))
+      }
+      */
 
-    println("print result")
-    for (i <- 0 to ad.length - 1) {
-      println(ad(i))
     }
+
+    //val rlt = Await.result(res, timeout.duration).asInstanceOf[GhostResponse]
+
+    //val o: OffloadableData = mResultCache.get(Util.dataPathBuilder(TASK_ID, seq))
+    //val ad = o.getData(SampleTaskKeys.DATA)
+    //println(ad.length)
 
   }
 
