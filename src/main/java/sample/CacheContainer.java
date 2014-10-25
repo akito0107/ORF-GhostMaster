@@ -17,9 +17,27 @@ public class CacheContainer {
 
     private static final String INFINISPAN_CONFIGURATION = "infinispan-local.xml";
 
+    private static EmbeddedCacheManager CACHE_MANAGER;
 
-    private static final EmbeddedCacheManager CACHE_MANAGER;
+    private static CacheContainer instance = null;
 
+    private CacheContainer(){
+        try {
+            CACHE_MANAGER = new DefaultCacheManager(INFINISPAN_CONFIGURATION);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to configure Infinispan", e);
+        }
+    }
+
+    public static CacheContainer getInstance(){
+
+        if(instance == null){
+            instance = new CacheContainer();
+        }
+        return instance;
+    }
+
+    /*
     static {
         try {
             CACHE_MANAGER = new DefaultCacheManager(INFINISPAN_CONFIGURATION);
@@ -27,6 +45,7 @@ public class CacheContainer {
             throw new RuntimeException("Unable to configure Infinispan", e);
         }
     }
+    */
 
     /**
      * Retrieves the default cache.
@@ -54,7 +73,7 @@ public class CacheContainer {
      * Retrieves the embedded cache manager.
      * @return a cache manager
      */
-    public static EmbeddedCacheManager getCacheContainer() {
+    public EmbeddedCacheManager getCacheContainer() {
         return CACHE_MANAGER;
     }
 

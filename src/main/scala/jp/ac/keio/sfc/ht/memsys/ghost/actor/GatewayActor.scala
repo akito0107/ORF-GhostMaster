@@ -23,6 +23,8 @@ class GatewayActor(id: Int) extends Gateway {
 
   private val mRefMap: mutable.HashMap[String, ActorRef] = new mutable.HashMap()
 
+  private val mRequestTable: mutable.HashMap[String, TaskExecutionCallback] = new mutable.HashMap()
+
   val log = Logging(TypedActor.context.system, TypedActor.context.self)
 
   override def registerApplication(APPNAME :String) :String = {
@@ -50,7 +52,7 @@ class GatewayActor(id: Int) extends Gateway {
         bundle.putData(BundleKeys.TASK_ID, taskId)
         val mes = new GhostRequest(GhostRequestTypes.REGISTERTASK, bundle)
 
-        implicit val timeout = Timeout(5 seconds)
+        implicit val timeout = Timeout(10 seconds)
         val f = ref ? mes
 
         return f
@@ -87,7 +89,7 @@ class GatewayActor(id: Int) extends Gateway {
         bundle.putData(BundleKeys.DATA_SEQ, seq)
         val mes = new GhostRequest(GhostRequestTypes.EXECUTE, bundle)
 
-        implicit val timeout = Timeout(5 seconds)
+        implicit val timeout = Timeout(10 seconds)
         val f = ref ? mes
 
         return f
@@ -108,5 +110,19 @@ class GatewayActor(id: Int) extends Gateway {
 
   override def removeApplication(request: GhostRequest): Future[Any] = ???
 
-}
+  override def onReceive(message: Any, sender: ActorRef): Unit = {
 
+    /*
+    message match {
+      case GhostResponse => {
+
+      }
+      case GhostRequest => {
+
+      }
+    }
+    */
+
+  }
+
+}

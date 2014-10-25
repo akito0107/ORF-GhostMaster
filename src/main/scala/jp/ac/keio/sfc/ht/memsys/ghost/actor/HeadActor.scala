@@ -1,14 +1,13 @@
 package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
-import akka.actor.{Actor, ActorRef, ActorLogging, Props}
+import akka.actor.{Actor, Props}
 import akka.event.Logging
 import akka.pattern.ask
+import akka.routing.{RoundRobinRouter}
 import akka.util.Timeout
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests.{GhostResponse, BundleKeys, Bundle, GhostRequest}
-import jp.ac.keio.sfc.ht.memsys.ghost.types.StatusTypes
 
-import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import scala.concurrent.duration._
@@ -24,10 +23,14 @@ object HeadActor {
 
 class HeadActor(id: String) extends Actor {
 
-  private val mChildrenTable :mutable.HashMap[String, mutable.MutableList[(StatusTypes, ActorRef)]] = new mutable.HashMap()
+
+  //TODO
   private val MAXACTORNUMS = 10
+  val router = context.actorOf(MemberActor.props(id).withRouter(RoundRobinRouter(nrOfInstances = MAXACTORNUMS)))
 
   val log = Logging(context.system, this)
+  log.info("Head Actor Parent is : " + context.parent.path.toString)
+
 
   def receive = {
 
@@ -43,21 +46,14 @@ class HeadActor(id: String) extends Actor {
 
           log.info("task id : " + taskId)
 
+          val gateway = sender
+
           if (taskId != null) {
-
-            val actorList = new mutable.MutableList[(StatusTypes, ActorRef)]()
-            mChildrenTable.put(taskId, actorList)
-
-            for(i <- 0 until MAXACTORNUMS){
-              val worker = this.context.actorOf(MemberActor.props(taskId))
-              actorList += ((StatusTypes.STANDBY, worker))
-            }
-
             val response = new GhostResponse(GhostResponseTypes.SUCCESS, "", null)
-            sender() ! response
+            gateway ! response
           } else {
             val response = new GhostResponse(GhostResponseTypes.FAIL, "", null)
-            sender() ! response
+            gateway ! response
           }
         }
         case GhostRequestTypes.EXECUTE => {
@@ -70,83 +66,40 @@ class HeadActor(id: String) extends Actor {
 
           log.info("task id : " + taskId)
 
-          val actors = mChildrenTable.get(taskId)
+          val params = new Bundle()
+          params.putData(BundleKeys.TASK_ID, taskId)
+          params.putData(BundleKeys.DATA_SEQ, requestSeq)
 
-          actors match {
-            case Some(refs) => {
-              /*
-              //TODO dynamic
-              var i = 0
-              if (refs.length == 0) {
-                worker = this.context.actorOf(MemberActor.props(taskName))
-                refs += ((StatusTypes.RUNNING, worker))
-              } else {
-                breakable {
-                  for (ref <- refs) {
-                    ref._1 match {
-                      case StatusTypes.STANDBY => {
-                        worker = ref._2
-                        break()
-                      }
-                    }
-                    i += 1
-                  }
+          log.info("Task Execute request to child from head")
+
+          implicit val timeout = Timeout(5 seconds)
+          val result: Future[GhostResponse] = ask(router, new GhostRequest(GhostRequestTypes.EXECUTE, params)).mapTo[GhostResponse]
+
+          val parent = sender
+
+          result onComplete {
+            case Success(response) => {
+              response.STATUS match {
+                case GhostResponseTypes.SUCCESS => {
+                  log.info("app id " + id + " Task id : " + taskId + " has been finished!")
+                  parent ! new GhostResponse(GhostResponseTypes.SUCCESS, requestSeq, bundle)
                 }
-                if (worker == null) {
-                  worker = this.context.actorOf(MemberActor.props(taskName))
-                  refs += ((StatusTypes.RUNNING, worker))
-                }
-              }
-
-              val index = i
-              */
-              val worker = this.context.actorOf(MemberActor.props(taskId))
-
-              val bundle = new Bundle()
-              bundle.putData(BundleKeys.TASK_ID,  taskId)
-              bundle.putData(BundleKeys.DATA_SEQ, requestSeq)
-
-              log.info("Task Execute request to child from head")
-
-              implicit val timeout = Timeout(5 seconds)
-              val result: Future[GhostResponse] = ask(worker, new GhostRequest(GhostRequestTypes.EXECUTE, bundle)).mapTo[GhostResponse]
-
-              result onComplete {
-                case Success(response) => {
-                  response.STATUS match {
-                    case GhostResponseTypes.SUCCESS => {
-                      sender() ! new GhostResponse(GhostResponseTypes.SUCCESS, requestSeq, bundle)
-                      this.context.unwatch(worker)
-                      this.context.stop(worker)
-                    }
-                    case GhostResponseTypes.FAIL => {
-                      val bundle = new Bundle()
-                      bundle.putData(BundleKeys.MESSAGE, "Task Execute failed !! execute error!")
-                      sender() ! new GhostResponse(GhostResponseTypes.FAIL, requestSeq, bundle)
-                      this.context.unwatch(worker)
-                      this.context.stop(worker)
-                    }
-                  }
-                }
-                case Failure(t) => {
+                case GhostResponseTypes.FAIL => {
+                  log.info("app id " + id + " Task id : " + taskId + " has been Failed!")
                   val bundle = new Bundle()
-                  bundle.putData(BundleKeys.MESSAGE, "Task Execute failed !! waiting error")
-                  sender() ! new GhostResponse(GhostResponseTypes.FAIL, requestSeq, bundle)
-                  this.context.unwatch(worker)
-                  this.context.stop(worker)
+                  bundle.putData(BundleKeys.MESSAGE, "Task Execute failed !! execute error!")
+                  parent ! new GhostResponse(GhostResponseTypes.FAIL, requestSeq, bundle)
                 }
               }
             }
-
-
-            case None => {
+            case Failure(t) => {
               val bundle = new Bundle()
-              bundle.putData(BundleKeys.MESSAGE, "Task Fetch failed !! No Such Task")
-              sender() ! new GhostResponse(GhostResponseTypes.FAIL, requestSeq, bundle)
+              bundle.putData(BundleKeys.MESSAGE, "Task Execute failed !! waiting error")
+              parent ! new GhostResponse(GhostResponseTypes.FAIL, requestSeq, bundle)
             }
           }
-
         }
+
         case GhostRequestTypes.HEALTH => {
           //TODO
 
@@ -159,7 +112,6 @@ class HeadActor(id: String) extends Actor {
         }
       }
     }
-
     case response: GhostResponse => {
 
     }

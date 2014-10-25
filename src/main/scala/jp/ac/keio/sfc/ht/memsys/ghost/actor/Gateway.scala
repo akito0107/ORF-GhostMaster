@@ -1,12 +1,13 @@
 package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
+import akka.actor.TypedActor.Receiver
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests.GhostRequest
 import scala.concurrent.Future
 
 /**
  * Created by aqram on 10/2/14.
  */
-trait Gateway {
+trait Gateway extends Receiver{
 
   def registerApplication(APPNAME :String) :String
 

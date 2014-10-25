@@ -22,6 +22,9 @@ public class SampleTaskImpl implements OffloadableTask {
 
         double[] vals = data.getData(SampleTaskKeys.DATA);
 
+        if(vals == null){
+            System.out.println("vals is null");
+        }
         heap = new double[vals.length];
         num = 0;
 

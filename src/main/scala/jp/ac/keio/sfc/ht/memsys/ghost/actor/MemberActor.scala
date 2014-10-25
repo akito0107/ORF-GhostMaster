@@ -1,5 +1,7 @@
 package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
+import java.util
+
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.event.Logging
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData
@@ -10,7 +12,7 @@ import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 import jp.ac.keio.sfc.ht.memsys.ghost.types.StatusTypes
 import org.infinispan.Cache
 import org.infinispan.manager.EmbeddedCacheManager
-import sample.CacheContainer
+import sample.{SampleTaskKeys, CacheContainer}
 
 /**
  * Created by aqram on 10/15/14.
@@ -27,7 +29,9 @@ class MemberActor(AppId :String) extends Actor{
   val ID = AppId;
   var Status :StatusTypes = StatusTypes.STANDBY
 
-  val mCacheManager :EmbeddedCacheManager = CacheContainer.getCacheContainer()
+
+  val cacheContainer = CacheContainer.getInstance()
+  val mCacheManager :EmbeddedCacheManager = cacheContainer.getCacheContainer()
 
   val mDataCache :Cache[String, OffloadableData] = mCacheManager.getCache[String, OffloadableData](CacheKeys.DATA_CACHE)
   val mTaskCache :Cache[String, OffloadableTask] = mCacheManager.getCache[String, OffloadableTask](CacheKeys.TASK_CACHE)
@@ -42,17 +46,26 @@ class MemberActor(AppId :String) extends Actor{
     case request :GhostRequest => {
       request.TYPE match{
         case GhostRequestTypes.EXECUTE =>{
+
+          log.info("Member received execute")
           val bundle :Bundle = request.PARAMS
 
           val taskId = bundle.getData(BundleKeys.TASK_ID)
           val seq = bundle.getData(BundleKeys.DATA_SEQ)
+          log.info("member : taskId : " + taskId + " seq " + seq)
 
           if(taskId != currentTaskId){
             currentTask = mTaskCache.get(taskId)
             currentTaskId =  taskId
           }
 
-          val data = mDataCache.get(Util.dataPathBuilder(currentTaskId, seq))
+          val data :OffloadableData= mDataCache.get(Util.dataPathBuilder(currentTaskId, seq))
+
+          if(data == null){
+            log.info("ERROR DATA IS NULL")
+            sender() ! new GhostResponse(GhostResponseTypes.FAIL, currentTaskId, null)
+          }
+
           val result :OffloadableData = currentTask.run(data)
           mResultCache.put(Util.dataPathBuilder(currentTaskId, seq), result);
 
