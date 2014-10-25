@@ -47,6 +47,8 @@ class MemberActor(AppId :String) extends Actor{
       request.TYPE match{
         case GhostRequestTypes.EXECUTE =>{
 
+          val head = sender()
+
           log.info("Member received execute")
           val bundle :Bundle = request.PARAMS
 
@@ -63,7 +65,7 @@ class MemberActor(AppId :String) extends Actor{
 
           if(data == null){
             log.info("ERROR DATA IS NULL")
-            sender() ! new GhostResponse(GhostResponseTypes.FAIL, currentTaskId, null)
+            head ! new GhostResponse(GhostResponseTypes.FAIL, currentTaskId, null)
           }
 
           val result :OffloadableData = currentTask.run(data)
@@ -74,7 +76,7 @@ class MemberActor(AppId :String) extends Actor{
           bundle.putData(BundleKeys.DATA_SEQ, seq)
 
           //TODO error handling
-          sender() ! new GhostResponse(GhostResponseTypes.SUCCESS, currentTaskId, resultBundle)
+          head ! new GhostResponse(GhostResponseTypes.SUCCESS, currentTaskId, resultBundle)
         }
       }
     }
