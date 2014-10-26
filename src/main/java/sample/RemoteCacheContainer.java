@@ -10,9 +10,10 @@ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 
 public class RemoteCacheContainer {
 
-    private static final RemoteCacheManager CACHE_MANAGER;
+    private static RemoteCacheManager CACHE_MANAGER;
+    private static RemoteCacheContainer instance = null;
 
-    static {
+    private RemoteCacheContainer(){
         try {
             CACHE_MANAGER = new RemoteCacheManager(new ConfigurationBuilder().addServers("localhost").build());
         } catch (Exception e) {
@@ -20,13 +21,22 @@ public class RemoteCacheContainer {
         }
     }
 
+    public static RemoteCacheContainer getInstance(){
+
+        if(instance==null){
+            instance = new RemoteCacheContainer();
+        }
+        return instance;
+    }
+
+
     /**
      * Retrieves the default cache.
      * @param <K> type used as keys in this cache
      * @param <V> type used as values in this cache
      * @return a cache
      */
-    public static <K, V> RemoteCache<K, V> getCache() {
+    public <K, V> RemoteCache<K, V> getCache() {
         return CACHE_MANAGER.getCache();
     }
 
@@ -37,7 +47,7 @@ public class RemoteCacheContainer {
      * @param <V> type used as values in this cache
      * @return a cache
      */
-    public static <K, V> RemoteCache<K, V> getCache(String cacheName) {
+    public <K, V> RemoteCache<K, V> getCache(String cacheName) {
         if (cacheName == null) throw new NullPointerException("Cache name cannot be null!");
         return CACHE_MANAGER.getCache(cacheName);
     }

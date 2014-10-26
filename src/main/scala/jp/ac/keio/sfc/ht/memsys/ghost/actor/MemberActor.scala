@@ -11,8 +11,9 @@ import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 import jp.ac.keio.sfc.ht.memsys.ghost.types.StatusTypes
 import org.infinispan.Cache
+import org.infinispan.client.hotrod.RemoteCache
 import org.infinispan.manager.EmbeddedCacheManager
-import sample.{SampleTaskKeys, CacheContainer}
+import sample.{RemoteCacheContainer, SampleTaskKeys, CacheContainer}
 
 /**
  * Created by aqram on 10/15/14.
@@ -30,12 +31,23 @@ class MemberActor(AppId :String) extends Actor{
   var Status :StatusTypes = StatusTypes.STANDBY
 
 
+  /*
+  //local
   val cacheContainer = CacheContainer.getInstance()
   val mCacheManager :EmbeddedCacheManager = cacheContainer.getCacheContainer()
 
   val mDataCache :Cache[String, OffloadableData] = mCacheManager.getCache[String, OffloadableData](CacheKeys.DATA_CACHE)
   val mTaskCache :Cache[String, OffloadableTask] = mCacheManager.getCache[String, OffloadableTask](CacheKeys.TASK_CACHE)
   val mResultCache :Cache[String, OffloadableData] = mCacheManager.getCache[String, OffloadableData](CacheKeys.RESULT_CACHE)
+  */
+
+  /**
+   *Remote Cache
+   */
+  val cacheContainer = RemoteCacheContainer.getInstance()
+  val mDataCache :RemoteCache[String, OffloadableData] = cacheContainer.getCache[String, OffloadableData](CacheKeys.DATA_CACHE)
+  val mTaskCache :RemoteCache[String, OffloadableTask] = cacheContainer.getCache[String, OffloadableTask](CacheKeys.TASK_CACHE)
+  val mResultCache :RemoteCache[String, OffloadableData] = cacheContainer.getCache[String, OffloadableData](CacheKeys.RESULT_CACHE)
 
   var currentTaskId :String = ""
   var currentTask :OffloadableTask = null

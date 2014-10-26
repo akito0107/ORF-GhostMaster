@@ -9,6 +9,7 @@ import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
 import jp.ac.keio.sfc.ht.memsys.ghost.types.StatusTypes
 import org.infinispan.Cache
+import org.infinispan.client.hotrod.RemoteCache
 import org.infinispan.manager.EmbeddedCacheManager
 
 import scala.concurrent.{Await, Future}
@@ -24,11 +25,19 @@ class SampleApp(_gateway: Gateway) {
 
   val gateway = _gateway
 
+  /*
   val cacheContainer = CacheContainer.getInstance()
   val mCacheManager: EmbeddedCacheManager = cacheContainer.getCacheContainer()
   val mDataCache: Cache[String, OffloadableData] = mCacheManager.getCache[String, OffloadableData](CacheKeys.DATA_CACHE)
   val mTaskCache: Cache[String, OffloadableTask] = mCacheManager.getCache[String, OffloadableTask](CacheKeys.TASK_CACHE)
   val mResultCache: Cache[String, OffloadableData] = mCacheManager.getCache[String, OffloadableData](CacheKeys.RESULT_CACHE)
+  */
+
+  val cacheContainer = RemoteCacheContainer.getInstance()
+  val mDataCache :RemoteCache[String, OffloadableData] = cacheContainer.getCache[String, OffloadableData](CacheKeys.DATA_CACHE)
+  val mTaskCache :RemoteCache[String, OffloadableTask] = cacheContainer.getCache[String, OffloadableTask](CacheKeys.TASK_CACHE)
+  val mResultCache :RemoteCache[String, OffloadableData] = cacheContainer.getCache[String, OffloadableData](CacheKeys.RESULT_CACHE)
+
 
   val APP_NAME = "sample_app"
   val TASK_NAME = "sample_task"
