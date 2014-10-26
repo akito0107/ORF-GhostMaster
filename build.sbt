@@ -6,10 +6,16 @@ scalaVersion := "2.11.2"
 
 resolvers += "Github" at "http://akito0107.github.io/ORF-GhostCommonLib-mvn-repo/"
 
+val infinispanVersion = "6.0.2.Final"
+
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.6",
   "com.typesafe.akka" %% "akka-remote" % "2.3.6",
-  "org.infinispan" % "infinispan-core" % "6.0.2.Final" excludeAll(
+  "org.infinispan" % "infinispan-client-hotrod" % infinispanVersion excludeAll(
+    ExclusionRule(organization = "org.jboss.marshalling", name = "jboss-marshalling-river"),
+    ExclusionRule(organization = "org.jboss.logging", name = "jboss-logging")
+    ),
+  "org.infinispan" % "infinispan-core" % infinispanVersion excludeAll(
     ExclusionRule(organization = "org.jgroups", name = "jgroups"),
     ExclusionRule(organization = "org.jboss.marshalling", name = "jboss-marshalling-river"),
     ExclusionRule(organization = "org.jboss.marshalling", name = "jboss-marshalling"),
