@@ -1,7 +1,8 @@
 package jp.ac.keio.sfc.ht.memsys.ghost.actor
 
-import akka.actor.{TypedActor, ActorContext, ActorRef, Props}
+import akka.actor._
 import akka.event.Logging
+import akka.remote.RemoteScope
 import akka.util.Timeout
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.{GhostResponseTypes, GhostRequestTypes}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests.{GhostResponse, BundleKeys, Bundle, GhostRequest}
@@ -27,11 +28,15 @@ class GatewayActor(id: Int) extends Gateway {
 
   val log = Logging(TypedActor.context.system, TypedActor.context.self)
 
+
   override def registerApplication(APPNAME :String) :String = {
     //TODO アドレスも返す
 
     val APP_ID :String = Util.makeSHA1Hash(APPNAME)
-    val ref: ActorRef = TypedActor.context.actorOf(HeadActor.props(APP_ID))
+    //val ref: ActorRef = TypedActor.context.actorOf(HeadActor.props(APP_ID))
+    val host = Address("akka.tcp", "Worker", "127.0.0.1", 2552)
+    val ref = TypedActor.context.actorOf(HeadActor.props(APP_ID).withDeploy(Deploy(scope = RemoteScope(host))))
+
     mRefMap.put(APP_ID, ref)
 
     APP_ID

@@ -8,7 +8,7 @@ resolvers += "Github" at "http://akito0107.github.io/ORF-GhostCommonLib-mvn-repo
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.6",
-  "com.typesafe.akka" %% "akka-cluster" % "2.3.6",
+  "com.typesafe.akka" %% "akka-remote" % "2.3.6",
   "org.infinispan" % "infinispan-core" % "6.0.2.Final" excludeAll(
     ExclusionRule(organization = "org.jgroups", name = "jgroups"),
     ExclusionRule(organization = "org.jboss.marshalling", name = "jboss-marshalling-river"),
@@ -22,5 +22,5 @@ libraryDependencies ++= Seq(
   "org.jboss.marshalling" % "jboss-marshalling" % "1.4.4.Final",
   "org.jboss.logging" % "jboss-logging" % "3.1.2.GA",
   "net.jcip" % "jcip-annotations" % "1.0",
-  "GhostCommonLib" % "GhostCommonLib" % "0.21-BETA"
+  "GhostCommonLib" % "GhostCommonLib" % "0.22-BETA"
 )

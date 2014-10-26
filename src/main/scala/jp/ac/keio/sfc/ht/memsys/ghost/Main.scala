@@ -1,6 +1,7 @@
 package jp.ac.keio.sfc.ht.memsys.main.Main
 
 import akka.actor._
+import com.typesafe.config.ConfigFactory
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.{GatewayActor, Gateway}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
 import sample.{SampleApp, SampleTaskImpl}
@@ -8,17 +9,31 @@ import sample.{SampleApp, SampleTaskImpl}
 /**
  * Created by aqram on 9/24/14.
  */
-object Main extends App{
+object Main {
 
   val ID:Int = 0
-  val system = ActorSystem("Main")
 
-  val gateway = TypedActor(system).typedActorOf(TypedProps(classOf[Gateway], new GatewayActor(ID)))
+  def main(args :Array[String]) :Unit = {
 
-  //Sample Task Impl
-  val sampleTask :OffloadableTask = new SampleTaskImpl
-  val sampleApp = new SampleApp(gateway)
+    if (args.isEmpty || args.head == "Gateway")
+      startGatewaySystem()
+    if (args.isEmpty || args.head == "Worker")
+      startWorkerSystem()
+  }
 
-  sampleApp.runApp
+  def startGatewaySystem() :Unit = {
+    val system = ActorSystem("Gateway", ConfigFactory.load("gateway"))
+    val gateway = TypedActor(system).typedActorOf(TypedProps(classOf[Gateway], new GatewayActor(ID)))
+
+    //Sample Task Impl
+    val sampleTask: OffloadableTask = new SampleTaskImpl
+    val sampleApp = new SampleApp(gateway)
+
+    sampleApp.runApp
+  }
+
+  def startWorkerSystem() :Unit = {
+    val system = ActorSystem("Worker", ConfigFactory.load("worker"))
+  }
 
 }
