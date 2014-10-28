@@ -25,7 +25,7 @@ class HeadActor(id: String) extends Actor {
 
 
   //TODO
-  private val MAXACTORNUMS = 10
+  private val MAXACTORNUMS = 100
   val router = context.actorOf(MemberActor.props(id).withRouter(RoundRobinRouter(nrOfInstances = MAXACTORNUMS)))
 
   val log = Logging(context.system, this)

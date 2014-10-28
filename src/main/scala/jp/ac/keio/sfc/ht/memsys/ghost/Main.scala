@@ -26,10 +26,11 @@ object Main {
     val gateway = TypedActor(system).typedActorOf(TypedProps(classOf[Gateway], new GatewayActor(ID)))
 
     //Sample Task Impl
+    /*
     val sampleTask: OffloadableTask = new SampleTaskImpl
     val sampleApp = new SampleApp(gateway)
-
     sampleApp.runApp
+    */
   }
 
   def startWorkerSystem() :Unit = {

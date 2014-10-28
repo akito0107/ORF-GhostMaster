@@ -66,7 +66,7 @@ class SampleApp(_gateway: Gateway) {
     val result = Await.result(fTask, timeout.duration).asInstanceOf[GhostResponse]
     println("Register Task DONE")
 
-    for (i <- 0 until 10) {
+    for (i <- 0 until 1000) {
       var seq: String = i.toString()
 
       //offload the data
