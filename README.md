@@ -20,13 +20,21 @@ infinispan-server-6.0.2.Final
 
 ### コマンドラインから
 プロジェクトルートで
-  $ sbt
+
+<pre><code> $ sbt </code></pre>
+
 と入力する。最初はかなり時間がかかる。待っていると、
-  > 
+
+<pre><code> > </code></pre>
+  
 というプロンプトが表示されるので
-  > compile 
+
+<pre><code> > compile </code></pre>
+  
 もしくは
-  > clean compile
+
+<pre><code> > clean compile </code></pre>
+  
 と入力する。
 
 
@@ -37,6 +45,8 @@ infinispanがないと動きません。
 http://infinispan.org/download/
 から6.0.2.Finalの *server* をダウンロードして来てください。
 zipを解凍すると、
+
+<pre><code>
   .
   ├── bin
   │   └── init.d
@@ -55,21 +65,37 @@ zipを解凍すると、
       ├── lib
       ├── log
       └── tmp
+</code></pre>
+
 こんな感じのディレクトリ構成になっているはず。
 standalone/configuration以下にslackで伝えたコンフィグファイルを設置してください。
 設置したらinfinispanのルートディレクトリにもどって、
-  % bin/standalone.sh -c ghost_standalone.xml
+
+<pre><code> % bin/standalone.sh -c ghost_standalone.xml </code></pre>
+  
 と入力してください（場合によってはsudoが必要）これでinfinispanが起動します。
 
 ### 実行方法
 プロジェクトルートで
-  % sbt
-  > compile
+
+<pre><code>
+% sbt
+> compile
+</code></pre>
+  
 と入力してください。
 まずはWorkerを起動します。
-  >run Worker
+
+<pre><code>
+>run Worker
+</code></pre>
+  
 これでworkerが起動します。別のシェルを開いて、
-  % sbt
-  > run Gateway
+
+<pre><code>
+% sbt
+> run Gateway
+</code></pre>
+  
 でメインのGatewayが起動します。sampleAppの実行はMain.scalaからはコメントアウトしていますが、元にもどして動作を確認してみてください。
   
