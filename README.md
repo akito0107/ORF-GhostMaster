@@ -8,8 +8,11 @@ MEMSYSのORFプロジェクト用のレポジトリです。
 環境
 ------
 JDK 1.6 (1.7や1.8ではダメ)
+
 SBT 0.13.6
+
 infinispan-server-6.0.2.Final
+
 それ意外の諸々は勝手にSBTがとってきます。
 
 
@@ -78,24 +81,22 @@ standalone/configuration以下にslackで伝えたコンフィグファイルを
 ### 実行方法
 プロジェクトルートで
 
-<pre><code>
-% sbt
-> compile
-</code></pre>
+
+<pre><code>% sbt
+> compile</code></pre>
+
   
 と入力してください。
 まずはWorkerを起動します。
 
-<pre><code>
->run Worker
-</code></pre>
-  
+<pre><code>>run Worker</code></pre>
+
 これでworkerが起動します。別のシェルを開いて、
 
-<pre><code>
-% sbt
-> run Gateway
-</code></pre>
-  
+
+<pre><code>% sbt
+> run Gateway</code></pre>
+
+
 でメインのGatewayが起動します。sampleAppの実行はMain.scalaからはコメントアウトしていますが、元にもどして動作を確認してみてください。
   
