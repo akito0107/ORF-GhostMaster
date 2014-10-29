@@ -60,7 +60,6 @@ class HeadActor(id: String) extends BaseActor with ActorLogging {
 
           actors match {
             case Some(refs) => {
-              val worker = this.context.actorOf(MemberActor.props(taskName))
               /*
               //TODO dynamic
               var i = 0
@@ -87,6 +86,7 @@ class HeadActor(id: String) extends BaseActor with ActorLogging {
 
               val index = i
               */
+              val worker = this.context.actorOf(MemberActor.props(taskName))
 
               val bundle = new Bundle()
               bundle.putData(BundleKeys.DATA_SEQ, requestSeq)

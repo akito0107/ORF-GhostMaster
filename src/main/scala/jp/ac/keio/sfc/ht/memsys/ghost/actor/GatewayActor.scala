@@ -22,8 +22,9 @@ class GatewayActor(id: Int) extends Gateway {
 
   override def registerApplication(APPNAME :String) :String = {
     //TODO アドレスも返す
-    val ref: ActorRef = TypedActor.context.actorOf(HeadActor.props(APPNAME))
+
     val APP_ID :String = Util.makeSHA1Hash(APPNAME)
+    val ref: ActorRef = TypedActor.context.actorOf(HeadActor.props(APP_ID))
     mRefMap.put(APP_ID, ref)
 
     APP_ID
@@ -60,10 +61,18 @@ class GatewayActor(id: Int) extends Gateway {
     }
   }
 
+  override def executeTask(request: GhostRequest): Future[Any] = {
+
+    val f  = Future{
+
+    }
+
+    f
+  }
+
   override def checkApplicationHealth(request: GhostRequest): Future[Any] = ???
 
   override def removeApplication(request: GhostRequest): Future[Any] = ???
 
-  override def executeTask(request: GhostRequest): Future[Any] = ???
 }
 
