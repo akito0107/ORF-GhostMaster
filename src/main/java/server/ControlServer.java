@@ -1,3 +1,5 @@
+package server;
+
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -15,7 +17,7 @@ import java.util.concurrent.Executors;
 /**
  * サーバ側メインクラス
  */
-public class EchoServer {
+public class ControlServer {
     public static void create_server(int port) {
         ChannelFactory factory =
                 new NioServerSocketChannelFactory( // server
@@ -38,7 +40,7 @@ public class EchoServer {
                 pipeline.addLast("stringDecoder", new StringDecoder());
                 // Application Logic Handler
 
-                pipeline.addLast("handler", new EchoServerHandler()); // server
+                pipeline.addLast("handler", new ControlServerHandler()); // server
 
                 return pipeline;
             }

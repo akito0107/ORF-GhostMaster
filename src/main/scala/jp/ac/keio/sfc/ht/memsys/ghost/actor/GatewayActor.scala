@@ -58,7 +58,7 @@ class GatewayActor(id: Int) extends Gateway {
         val mes = new GhostRequest(GhostRequestTypes.REGISTERTASK, bundle)
 
         implicit val timeout = Timeout(10 seconds)
-        val f = ref ? mes
+        val f :Future[Any] = ref ? mes
 
         return f
       }

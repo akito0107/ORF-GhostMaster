@@ -1,3 +1,5 @@
+package server;
+
 import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -21,7 +23,7 @@ import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 /**
  * サーバ側アプリケーションロジック
  */
-public class EchoServerHandler extends SimpleChannelHandler {
+public class ControlServerHandler extends SimpleChannelHandler {
     /**
      * クライアントから電文を受信した際に呼び出されるメソッド
      */

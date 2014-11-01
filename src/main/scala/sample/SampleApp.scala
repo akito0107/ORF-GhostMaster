@@ -49,6 +49,7 @@ class SampleApp(_gateway: Gateway) {
     val APP_ID = gateway.registerApplication(APP_NAME)
 
     println("APP ID : " + APP_ID)
+
     //register task for cache
     val TASK_ID = Util.taskPathBuilder(APP_ID, TASK_NAME)
     mTaskCache.put(TASK_ID, new SampleTaskImpl())
@@ -86,7 +87,7 @@ class SampleApp(_gateway: Gateway) {
 
       val eRequest: GhostRequest = new GhostRequest(GhostRequestTypes.EXECUTE, eBundle)
 
-      val res = gateway.executeTask(eRequest)
+      val res :Future[Any] = gateway.executeTask(eRequest)
 
       println("print result of "  + seq)
       /*

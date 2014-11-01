@@ -101,11 +101,10 @@ class HeadActor(id: String) extends Actor {
         }
 
         case GhostRequestTypes.HEALTH => {
-          //TODO
 
         }
         case GhostRequestTypes.SHUTDOWN => {
-          //TODO
+
         }
         case _ => {
           sender() ! new GhostResponse(GhostResponseTypes.UNKNOWN, "", null)
