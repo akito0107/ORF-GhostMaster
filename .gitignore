@@ -3,6 +3,7 @@
 # ### Intellij ###
 # # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 #
+test_outs/*
 /*.iml
 #
 # ## Directory-based project format:
