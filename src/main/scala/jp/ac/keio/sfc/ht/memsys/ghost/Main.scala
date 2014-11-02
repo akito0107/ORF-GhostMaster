@@ -2,9 +2,11 @@ package jp.ac.keio.sfc.ht.memsys.main.Main
 
 import akka.actor._
 import com.typesafe.config.ConfigFactory
+import gps.GPSTaskImpl
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.{GatewayActor, Gateway}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
-import sample.{SampleApp, SampleTaskImpl}
+//import sample.{SampleApp, SampleTaskImpl}
+import gps.{GPSAcquisition, GPSTaskImpl}
 
 /**
  * Created by aqram on 9/24/14.
@@ -26,11 +28,13 @@ object Main {
     val gateway = TypedActor(system).typedActorOf(TypedProps(classOf[Gateway], new GatewayActor(ID)))
 
     //Sample Task Impl
-    /*
-    val sampleTask: OffloadableTask = new SampleTaskImpl
-    val sampleApp = new SampleApp(gateway)
-    sampleApp.runApp
-    */
+//    val sampleTask: OffloadableTask = new SampleTaskImpl
+//    val sampleApp = new SampleApp(gateway)
+//    sampleApp.runApp
+    val GPSTask: OffloadableTask = new GPSTaskImpl
+    val GPSAcquisition = new GPSAcquisition(gateway)
+    GPSAcquisition.runApp
+
   }
 
   def startWorkerSystem() :Unit = {
