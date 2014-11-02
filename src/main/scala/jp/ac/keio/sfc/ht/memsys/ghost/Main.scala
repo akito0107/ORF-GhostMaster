@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigFactory
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.{GatewayActor, Gateway}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
 import sample.{SampleApp, SampleTaskImpl}
+import server.ControlServer
 
 /**
  * Created by aqram on 9/24/14.
@@ -15,10 +16,16 @@ object Main {
 
   def main(args :Array[String]) :Unit = {
 
+    startServer()
+
     if (args.isEmpty || args.head == "Gateway")
-      startGatewaySystem()
+  //    startGatewaySystem()
     if (args.isEmpty || args.head == "Worker")
       startWorkerSystem()
+  }
+
+  def startServer(): Unit = {
+    ControlServer.createServer(2555)
   }
 
   def startGatewaySystem() :Unit = {

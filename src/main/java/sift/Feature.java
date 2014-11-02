@@ -38,4 +38,5 @@ public class Feature implements Comparable<Feature>, Serializable {
         }
         return (float) Math.sqrt(d);
     }
+
 }

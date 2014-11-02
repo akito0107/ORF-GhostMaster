@@ -30,5 +30,6 @@ libraryDependencies ++= Seq(
   "net.jcip" % "jcip-annotations" % "1.0",
   "GhostCommonLib" % "GhostCommonLib" % "0.23-BETA",
   "org.json" % "json" % "20140107",
-  "gov.nist.math"%"jama"%"1.0.3"
+  "gov.nist.math"%"jama"%"1.0.3",
+  "io.netty" % "netty-all" % "4.0.4.Final"
 )
