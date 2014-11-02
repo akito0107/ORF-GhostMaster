@@ -15,6 +15,7 @@ import org.jboss.netty.handler.codec.http.multipart.InterfaceHttpData;
 import org.jboss.netty.util.CharsetUtil;
 
 import org.jboss.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
+import org.json.JSONObject;
 
 import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -31,9 +32,7 @@ public class ControlServerHandler extends SimpleChannelHandler {
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent event) {
 
         HttpRequest request = (HttpRequest)event.getMessage();
-
         ChannelBuffer messageObject = ((HttpRequest)event.getMessage()).getContent();
-
 
         if (messageObject instanceof BigEndianHeapChannelBuffer) {
 
@@ -46,6 +45,7 @@ public class ControlServerHandler extends SimpleChannelHandler {
                 bigEndianHeapChannelBuffer.readBytes(byteArray);
 
                 System.out.print(" Message = "+new String(byteArray));
+                JSONObject json = new JSONObject(new String(byteArray));
 
                 bigEndianHeapChannelBuffer.clear();
 

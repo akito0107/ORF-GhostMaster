@@ -20,7 +20,7 @@ public class SampleTaskImpl implements OffloadableTask {
     @Override
     public OffloadableData run(OffloadableData data) {
 
-        double[] vals = data.getData(SampleTaskKeys.DATA);
+        double[] vals = (double[])data.getData(SampleTaskKeys.DATA);
 
         if(vals == null){
             System.out.println("vals is null");

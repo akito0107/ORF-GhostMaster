@@ -28,5 +28,7 @@ libraryDependencies ++= Seq(
   "org.jboss.marshalling" % "jboss-marshalling" % "1.4.4.Final",
   "org.jboss.logging" % "jboss-logging" % "3.1.2.GA",
   "net.jcip" % "jcip-annotations" % "1.0",
-  "GhostCommonLib" % "GhostCommonLib" % "0.23-BETA"
+  "GhostCommonLib" % "GhostCommonLib" % "0.23-BETA",
+  "org.json" % "json" % "20140107",
+  "gov.nist.math"%"jama"%"1.0.3"
 )
