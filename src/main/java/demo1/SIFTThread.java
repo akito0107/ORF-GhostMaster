@@ -22,11 +22,11 @@ public class SIFTThread implements Runnable{
 
     private BufferedImage mImage;
     byte[] original;
-    //private LinkedBlockingQueue mQueue;
+    private LinkedBlockingQueue mQueue;
 
-    public SIFTThread (byte[] image){
+    public SIFTThread (byte[] image, LinkedBlockingQueue queue){
         InputStream in = new ByteArrayInputStream(image);
-        //mQueue = queue;
+        mQueue = queue;
         try {
             mImage = ImageIO.read(in);
             original = image;
@@ -57,13 +57,15 @@ public class SIFTThread implements Runnable{
         System.out.println("-----------------------------");
         System.out.println(mImage.getWidth());
 
-        //mQueue.add(mImage);
+        try {
+            mQueue.put(mImage);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //mQueue.notifyAll();
 
-        Vector<Feature> features = SIFT.getFeatures(mImage.getWidth(), mImage.getHeight(), getPixelsTab(original));
-
-        System.out.println(String.valueOf(features.size()));
-
+        //Vector<Feature> features = SIFT.getFeatures(mImage.getWidth(), mImage.getHeight(), getPixelsTab(original));
+        //System.out.println(String.valueOf(features.size()));
     }
 
     private int[] getPixelsTab(byte[] buf) {

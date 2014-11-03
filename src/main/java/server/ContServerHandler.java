@@ -16,8 +16,9 @@ public class ContServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 
     LinkedBlockingQueue mQueue;
 
-    public ContServerHandler(){
+    public ContServerHandler(LinkedBlockingQueue queue){
         super();
+        mQueue = queue;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class ContServerHandler extends SimpleChannelInboundHandler<FullHttpReque
                 try {
                     //Attribute attribute = (Attribute) data;
                     MemoryFileUpload file = (MemoryFileUpload) data;
-                    Thread t = new Thread(new SIFTThread(file.get()));
+                    Thread t = new Thread(new SIFTThread(file.get(), mQueue));
                     t.start();
                     writeToTestFile(file.get());
                     //System.out.println(attribute.getValue());
