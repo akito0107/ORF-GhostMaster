@@ -15,10 +15,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ContServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     LinkedBlockingQueue mQueue;
+    int port;
 
-    public ContServerHandler(LinkedBlockingQueue queue){
+    public ContServerHandler(LinkedBlockingQueue queue, int p){
         super();
         mQueue = queue;
+        port = p;
     }
 
     @Override
@@ -50,8 +52,12 @@ public class ContServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         FileOutputStream fos = null;
 
         try{
-            // create new file output stream
-            fos=new FileOutputStream("test_outs/test1.jpeg");
+            if (port == 2556) {
+                fos=new FileOutputStream("/Users/usa/orf2014/ORF-SIFT-Web/img/android.jpeg");
+            } else {
+                // create new file output stream
+                fos=new FileOutputStream("/Users/usa/orf2014/ORF-SIFT-Web/img/test1.jpeg");
+            }
 
             // writes bytes to the output stream
             fos.write(data);

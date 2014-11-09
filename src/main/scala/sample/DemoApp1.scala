@@ -119,7 +119,6 @@ class DemoApp1(queue: LinkedBlockingQueue[Object], gateway: Gateway) {
 
       val res :Future[Any] = gateway.executeTask(eRequest)
 
-
     }
 
     //val fs1: util.Vector[Feature] = sift.run(max_size)

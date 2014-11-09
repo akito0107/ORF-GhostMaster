@@ -42,8 +42,8 @@ public class SIFTThread implements Runnable{
             InputStream in2 = new ByteArrayInputStream(imageInByte);
             BufferedImage bImageFromConvert = ImageIO.read(in2);
 
-            ImageIO.write(bImageFromConvert, "jpeg", new File(
-                    "test_outs/test2.jpeg"));
+//            File f = new File("/Users/usa/orf2014/ORF-SIFT-Web/img/cloud.jpeg");
+//            ImageIO.write(bImageFromConvert, "jpeg", f);
 
         } catch (IOException e) {
             e.printStackTrace();

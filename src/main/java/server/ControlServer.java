@@ -50,7 +50,7 @@ public class ControlServer {
                                     //p.addLast(new StringDecoder());
                                     p.addLast(new HttpServerCodec());
                                     p.addLast(new HttpObjectAggregator(1048576));
-                                    p.addLast(new ContServerHandler(queue));
+                                    p.addLast(new ContServerHandler(queue, PORT));
                                     //p.addLast(new HttpUploadServerHandler());
                                 }
                             });

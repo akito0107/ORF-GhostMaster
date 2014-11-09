@@ -16,6 +16,7 @@ object Main {
 
   val ID:Int = 0
   val queue = new LinkedBlockingQueue[Object]()
+  val aqueue = new LinkedBlockingQueue[Object]()
 
   def main(args :Array[String]) :Unit = {
 
@@ -33,6 +34,7 @@ object Main {
 
   def startServer(): Unit = {
     ControlServer.createServer(2555, queue)
+    ControlServer.createServer(2556, aqueue)
   }
 
   def startGatewaySystem() :Unit = {
