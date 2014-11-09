@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 
 public class ImageSample {
@@ -43,6 +44,8 @@ public class ImageSample {
         ColorPanel panel = new ColorPanel(mBufferedImage,features);
         pane.add(panel);
         canvas.setVisible(true);
+
+        save(panel);
     }
 
     /*
@@ -120,6 +123,22 @@ public class ImageSample {
 
         Vector<Feature> features = SIFT.getFeatures(mBufferedImage.getWidth(), mBufferedImage.getHeight(), pixels);
         showImage(features);
+    }
+
+    public void save(JPanel p)
+    {
+        BufferedImage bImg = new BufferedImage(p.getWidth(), p.getWidth(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D cg = bImg.createGraphics();
+        p.paintAll(cg);
+        try {
+            if (ImageIO.write(bImg, "png", new File("src/samples/out/out.png")))
+            {
+                System.out.println("-- saved");
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 }
