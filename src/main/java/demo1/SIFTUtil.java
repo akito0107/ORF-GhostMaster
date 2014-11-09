@@ -20,8 +20,8 @@ public class SIFTUtil {
         // On Android, Color are coded in 4 bytes (argb),
         // whereas SIFT needs color coded in 3 bytes (rgb)
 
-        for (int i = 0; i < (width * height); i++)
-            pixels[i] &= 0x00ffffff;
+        //for (int i = 0; i < (width * height); i++)
+            //pixels[i] &= 0x00ffffff;
 
         return pixels;
     }
@@ -29,13 +29,9 @@ public class SIFTUtil {
     public static int[] convertTo2DUsingGetRGB(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
-        int[] result = new int[height * width];
 
-        for (int row = 0; row < height; row++) {
-            for (int col = 1; col <=width; col++) {
-                result[row * col] = image.getRGB(col-1, row);
-            }
-        }
-        return result;
+        int[] dataBuffInt = image.getRGB(0, 0, width, height, null, 0, width);
+
+        return dataBuffInt;
     }
 }
