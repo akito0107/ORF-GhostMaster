@@ -1,18 +1,23 @@
 package sample
 
+import akka.actor.Status.Success
 import akka.util.Timeout
 import java.awt.image.BufferedImage
 import java.util
 import java.util.Collections
+import java.util.Vector
 import java.util.concurrent.{LinkedBlockingQueue, LinkedBlockingDeque}
 import akka.util.Timeout
+import demo1.image.ImageSample
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.Gateway
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.data.OffloadableData
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.datatypes.GhostRequestTypes
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.requests._
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.util.Util
+import org.infinispan.Cache
 import org.infinispan.client.hotrod.RemoteCache
+import org.infinispan.manager.EmbeddedCacheManager
 import sift._
 
 import demo1.{SIFTUtil, DemoApp1Callback}
@@ -43,11 +48,19 @@ class DemoApp1(queue: LinkedBlockingQueue[Object], gateway: Gateway) {
   private val min_size: Int = 64
   private val max_size: Int = 1024
 
+
   val cacheContainer = RemoteCacheContainer.getInstance()
   val mDataCache :RemoteCache[String, OffloadableData] = cacheContainer.getCache[String, OffloadableData](CacheKeys.DATA_CACHE)
   val mTaskCache :RemoteCache[String, OffloadableTask] = cacheContainer.getCache[String, OffloadableTask](CacheKeys.TASK_CACHE)
   val mResultCache :RemoteCache[String, OffloadableData] = cacheContainer.getCache[String, OffloadableData](CacheKeys.RESULT_CACHE)
 
+  /*
+ val cacheContainer = CacheContainer.getInstance()
+ val mCacheManager: EmbeddedCacheManager = cacheContainer.getCacheContainer()
+ val mDataCache: Cache[String, OffloadableData] = mCacheManager.getCache[String, OffloadableData](CacheKeys.DATA_CACHE)
+ val mTaskCache: Cache[String, OffloadableTask] = mCacheManager.getCache[String, OffloadableTask](CacheKeys.TASK_CACHE)
+ val mResultCache: Cache[String, OffloadableData] = mCacheManager.getCache[String, OffloadableData](CacheKeys.RESULT_CACHE)
+  */
 
   def startApp: Unit ={
 
@@ -77,13 +90,27 @@ class DemoApp1(queue: LinkedBlockingQueue[Object], gateway: Gateway) {
     val result = Await.result(fTask, timeout.duration).asInstanceOf[GhostResponse]
     println("Register Task DONE")
 
+    /*
+    val ImageContainer = new ImageSample
+
+    val image = ImageContainer.getImage
+    var pixels: Array[Int] = SIFTUtil.getPixelsTab(image)
+    var fa = SIFT.ArrayToFloatArray2D(image.getWidth(), image.getHeight(), pixels)
+    val f = getFeatures(fa, APP_ID, TASK_ID)
+
+    ImageContainer.showImage(f)
+    */
+
     while (true) {
       println("Waiting....")
       try {
         val image = mQueue.take().asInstanceOf[BufferedImage]
+        val ImageContainer = new ImageSample(image)
         var pixels: Array[Int] = SIFTUtil.getPixelsTab(image)
         var fa = SIFT.ArrayToFloatArray2D(image.getWidth(), image.getHeight(), pixels)
-        getFeatures(fa, APP_ID, TASK_ID)
+        val f = getFeatures(fa, APP_ID, TASK_ID)
+        ImageContainer.showImage(f)
+
       }catch{
         case e :InterruptedException => println("Thread error....")
         case e :ClassCastException => println("cast ERROR")
@@ -92,7 +119,7 @@ class DemoApp1(queue: LinkedBlockingQueue[Object], gateway: Gateway) {
     }
   }
 
-  def getFeatures(_fa: FloatArray2D, APP_ID :String, TASK_ID :String): Unit = {
+  def getFeatures(_fa: FloatArray2D, APP_ID :String, TASK_ID :String):util.Vector[Feature] = {
     var fa = _fa
 
     val sift: FloatArray2DSIFT = new FloatArray2DSIFT(fdsize, fdbins)
@@ -100,6 +127,8 @@ class DemoApp1(queue: LinkedBlockingQueue[Object], gateway: Gateway) {
 
     fa = Filter.computeGaussianFastMirror(fa, (Math.sqrt(initial_sigma * initial_sigma - 0.25)).asInstanceOf[Float])
     sift.init(fa, steps, initial_sigma, min_size, max_size)
+
+    val features: util.Vector[Feature] = new util.Vector[Feature]
 
     for(o <- 0 until sift.getOctaves.length){
 
@@ -119,8 +148,16 @@ class DemoApp1(queue: LinkedBlockingQueue[Object], gateway: Gateway) {
 
       val res :Future[Any] = gateway.executeTask(eRequest)
 
-    }
+      implicit val timeout = Timeout(10 seconds)
+      val result = Await.result(res, timeout.duration).asInstanceOf[GhostResponse]
+      val taskId = result.MESSAGE.getData(BundleKeys.TASK_ID)
+      val dataSeq = result.MESSAGE.getData(BundleKeys.DATA_SEQ)
+      val feature = mResultCache.get(Util.dataPathBuilder(taskId, dataSeq))
+      features.addAll(feature.getData("FEATURE").asInstanceOf[util.Vector[Feature]])
 
+    }
+    util.Collections.sort(features)
+    return features
     //val fs1: util.Vector[Feature] = sift.run(max_size)
 
     //Collections.sort(fs1)

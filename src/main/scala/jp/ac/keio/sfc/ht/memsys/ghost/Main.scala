@@ -4,6 +4,7 @@ import java.util.concurrent.LinkedBlockingQueue
 
 import akka.actor._
 import com.typesafe.config.ConfigFactory
+import demo1.image.ImageSample
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.{GatewayActor, Gateway}
 import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
 import sample.{DemoApp1, SampleApp, SampleTaskImpl}
@@ -28,6 +29,11 @@ object Main {
     if (args.head == "Worker") {
       println("Start Worker")
       startWorkerSystem()
+    }
+
+    if(args.head == "Image") {
+      val image = new ImageSample
+      image.processSIFT()
     }
 
   }
