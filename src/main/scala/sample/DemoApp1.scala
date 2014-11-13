@@ -19,8 +19,10 @@ import org.infinispan.Cache
 import org.infinispan.client.hotrod.RemoteCache
 import org.infinispan.manager.EmbeddedCacheManager
 import sift._
+import dispatch._, Defaults._
 
 import demo1.{SIFTUtil, DemoApp1Callback}
+import sun.net.www.http.HttpClient
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
@@ -108,7 +110,14 @@ class DemoApp1(queue: LinkedBlockingQueue[Object], gateway: Gateway) {
         val ImageContainer = new ImageSample(image)
         var pixels: Array[Int] = SIFTUtil.getPixelsTab(image)
         var fa = SIFT.ArrayToFloatArray2D(image.getWidth(), image.getHeight(), pixels)
+        val start = System.currentTimeMillis()
         val f = getFeatures(fa, APP_ID, TASK_ID)
+        val processingTime = System.currentTimeMillis() - start
+        println("...........time..............")
+        println(processingTime)
+        println(".............................")
+        val svc = url("http://133.27.171.204:3000/setcloudtime/" + processingTime.toString())
+        val response = Http(svc OK as.String)
         ImageContainer.showImage(f)
 
       }catch{

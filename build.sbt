@@ -31,5 +31,6 @@ libraryDependencies ++= Seq(
   "GhostCommonLib" % "GhostCommonLib" % "0.23-BETA",
   "org.json" % "json" % "20140107",
   "gov.nist.math"%"jama"%"1.0.3",
-  "io.netty" % "netty-all" % "4.0.4.Final"
+  "io.netty" % "netty-all" % "4.0.4.Final",
+  "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
 )
