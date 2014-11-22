@@ -1,28 +1,25 @@
 package jp.ac.keio.sfc.ht.memsys.main.Main
 
+import java.awt.image.BufferedImage
 import java.util.concurrent.LinkedBlockingQueue
 
 import akka.actor._
 import com.typesafe.config.ConfigFactory
-import demo1.image.ImageSample
 import jp.ac.keio.sfc.ht.memsys.ghost.actor.{GatewayActor, Gateway}
-import jp.ac.keio.sfc.ht.memsys.ghost.commonlib.tasks.OffloadableTask
-import sample.{DemoApp1, SampleApp, SampleTaskImpl}
-import server.ControlServer
+import sample.{DemoApp2}
+import stream.agent.StreamClient
 
 /**
  * Created by aqram on 9/24/14.
  */
 object Main {
 
-  val ID:Int = 0
-  val queue = new LinkedBlockingQueue[Object]()
+  val ID: Int = 0
 
-  def main(args :Array[String]) :Unit = {
+  def main(args: Array[String]): Unit = {
 
     if (args.head == "Gateway") {
       println("Start Gateway")
-    //  startServer()
       startGatewaySystem()
     }
     if (args.head == "Worker") {
@@ -30,20 +27,33 @@ object Main {
       startWorkerSystem()
     }
 
-    if(args.head == "Image") {
-      val image = new ImageSample
-      image.processSIFT()
-    }
 
   }
 
-  def startServer(): Unit = {
-    ControlServer.createServer(2555, queue)
-  }
-
-  def startGatewaySystem() :Unit = {
+  def startGatewaySystem(): Unit = {
     val system = ActorSystem("Gateway", ConfigFactory.load("gateway"))
     val gateway = TypedActor(system).typedActorOf(TypedProps(classOf[Gateway], new GatewayActor(ID)))
+
+    val inqueue = new LinkedBlockingQueue[BufferedImage]()
+    val outqueue = new LinkedBlockingQueue[BufferedImage]()
+
+
+    val s = new Thread(new Runnable {
+      override def run(): Unit = {
+        val server = new StreamClient(inqueue, outqueue)
+        server.run()
+      }
+    })
+
+    val t = new Thread(new Runnable {
+      override def run(): Unit = {
+        val app = new DemoApp2(inqueue, outqueue, gateway)
+        app.startApp
+      }
+    })
+
+    s.start()
+    t.start()
 
     //Sample Task Impl
     /*
@@ -51,15 +61,9 @@ object Main {
     val sampleApp = new SampleApp(gateway)
     sampleApp.runApp
     */
-
-
-    println("DEMO1 start...")
-    val demo1 :DemoApp1 = new DemoApp1(queue, gateway)
-    demo1.startApp
-
   }
 
-  def startWorkerSystem() :Unit = {
+  def startWorkerSystem(): Unit = {
     val system = ActorSystem("Worker", ConfigFactory.load("worker"))
   }
 

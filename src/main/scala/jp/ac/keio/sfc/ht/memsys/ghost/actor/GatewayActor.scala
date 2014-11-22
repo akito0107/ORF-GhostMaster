@@ -81,6 +81,7 @@ class GatewayActor(id: Int) extends Gateway {
     val appId = bundle.getData(BundleKeys.APP_ID)
     val taskId = bundle.getData(BundleKeys.TASK_ID)
     val seq = bundle.getData(BundleKeys.DATA_SEQ)
+    val pdata = bundle.getData(BundleKeys.PDATA)
 
     log.info("Gateway execute request appid " + appId + " taskId " + taskId + " seq " + seq)
 
@@ -92,6 +93,9 @@ class GatewayActor(id: Int) extends Gateway {
         bundle.putData(BundleKeys.APP_ID, appId)
         bundle.putData(BundleKeys.TASK_ID, taskId)
         bundle.putData(BundleKeys.DATA_SEQ, seq)
+        if(pdata!=null){
+          bundle.putData(BundleKeys.PDATA, pdata)
+        }
         val mes = new GhostRequest(GhostRequestTypes.EXECUTE, bundle)
 
         implicit val timeout = Timeout(10 seconds)

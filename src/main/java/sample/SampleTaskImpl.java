@@ -18,7 +18,7 @@ public class SampleTaskImpl implements OffloadableTask {
 
 
     @Override
-    public OffloadableData run(OffloadableData data) {
+    public OffloadableData run(OffloadableData data, OffloadableData m) {
 
         double[] vals = (double[])data.getData(SampleTaskKeys.DATA);
 

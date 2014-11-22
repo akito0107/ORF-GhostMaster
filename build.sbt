@@ -6,7 +6,13 @@ scalaVersion := "2.11.2"
 
 resolvers += "Github" at "http://akito0107.github.io/ORF-GhostCommonLib-mvn-repo/"
 
+resolvers += "Xuggle" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/"
+
+resolvers += "Sonatype" at "http://oss.sonatype.org/content/repositories/snapshots/"
+
 val infinispanVersion = "6.0.2.Final"
+
+scalacOptions ++= Seq("-feature")
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.6",
@@ -28,8 +34,13 @@ libraryDependencies ++= Seq(
   "org.jboss.marshalling" % "jboss-marshalling" % "1.4.4.Final",
   "org.jboss.logging" % "jboss-logging" % "3.1.2.GA",
   "net.jcip" % "jcip-annotations" % "1.0",
-  "GhostCommonLib" % "GhostCommonLib" % "0.23-BETA",
+  "GhostCommonLib" % "GhostCommonLib" % "0.31-BETA",
   "org.json" % "json" % "20140107",
   "gov.nist.math"%"jama"%"1.0.3",
-  "io.netty" % "netty-all" % "4.0.4.Final"
+  "io.netty" % "netty" % "3.6.3.Final",
+  "com.github.sarxos" % "webcam-capture" % "0.3.10",
+  "xuggle" % "xuggle-xuggler" % "5.4",
+  "net.coobird" % "thumbnailator" % "0.4.3",
+  "org.slf4j" % "slf4j-jdk14" % "1.7.3",
+  "org.apache.commons" % "commons-math3" % "3.2"
 )
